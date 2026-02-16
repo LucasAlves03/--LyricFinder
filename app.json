@@ -1,29 +1,45 @@
 {
   "expo": {
-    "name": "lyrics-finder",
+    "name": "Lyrics",
     "slug": "lyrics-finder",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "icon": "./assets/Images/Lyric.png",
+    "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/Images/Lyric.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000000",
+      "dark": {
+        "backgroundColor": "#000000"
+      }
     },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/Images/Lyric.png",
+        "backgroundColor": "#000000"
       },
-      "edgeToEdgeEnabled": true
+      "package": "com.lucasa19.lyricsfinder"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/Images/Lyric.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "64f6e22d-4200-43dc-af8e-b59827b48547"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/64f6e22d-4200-43dc-af8e-b59827b48547"
     }
   }
 }
