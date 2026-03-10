@@ -187,7 +187,7 @@ export default function EmptyState() {
         bounces={false}
       >
         <View style={styles.content}>
-          <Text style={styles.title}>Lyrics 4ALL</Text>
+          <Text style={styles.title}>Lyrics</Text>
           <Text style={styles.subtitle}>
             Search your favorite song, check the lyrics and
             save to sing later with a beautiful UI.

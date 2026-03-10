@@ -1,65 +1,86 @@
 import axios from 'axios';
-import { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } from '../../config';
 
-let accessToken = null;
-let tokenExpirationTime = null;
+const MUSICBRAINZ_USER_AGENT = 'LyricsApp/1.0 ( https://example.com )';
 
-const getAccessToken = async () => {
-  if (accessToken && tokenExpirationTime && Date.now() < tokenExpirationTime) {
-    return accessToken;
-  }
+const fetchFromITunes = async (query) => {
+  const response = await axios.get('https://itunes.apple.com/search', {
+    params: {
+      term: query,
+      entity: 'song',
+      limit: 1,
+    },
+  });
 
-  try {
-    const response = await axios.post(
-      'https://accounts.spotify.com/api/token',
-      'grant_type=client_credentials',
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: `Basic ${btoa(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`)}`,
-        },
+  const result = response.data?.results?.[0];
+  if (!result) return null;
+
+  const artwork = result.artworkUrl100
+    ? result.artworkUrl100.replace('100x100', '600x600')
+    : null;
+
+  return {
+    title: result.trackName,
+    artist: result.artistName,
+    album: result.collectionName,
+    albumArt: artwork,
+    releaseDate: result.releaseDate,
+    previewUrl: result.previewUrl,
+  };
+};
+
+const fetchFromMusicBrainz = async (query) => {
+  const response = await axios.get('https://musicbrainz.org/ws/2/recording', {
+    headers: {
+      'User-Agent': MUSICBRAINZ_USER_AGENT,
+    },
+    params: {
+      query,
+      fmt: 'json',
+      limit: 1,
+    },
+  });
+
+  const recording = response.data?.recordings?.[0];
+  if (!recording) return null;
+
+  const artist = recording['artist-credit']?.[0]?.name || 'Unknown Artist';
+  const release = recording.releases?.[0];
+  const album = release?.title || 'Unknown Album';
+  const releaseId = release?.id;
+
+  let albumArt = null;
+  if (releaseId) {
+    try {
+      const artResponse = await axios.get(`https://coverartarchive.org/release/${releaseId}`);
+      const images = artResponse.data?.images || [];
+      const frontImage = images.find((img) => img.front) || images[0];
+      albumArt = frontImage?.thumbnails?.large || frontImage?.image || null;
+    } catch (error) {
+      if (error?.response?.status !== 404) {
+        throw error;
       }
-    );
-
-    accessToken = response.data.access_token;
-    tokenExpirationTime = Date.now() + (response.data.expires_in - 60) * 1000;
-    
-    return accessToken;
-  } catch (error) {
-    console.error('Error getting Spotify access token:', error);
-    throw error;
+    }
   }
+
+  return {
+    title: recording.title,
+    artist,
+    album,
+    albumArt,
+    releaseDate: recording['first-release-date'],
+    previewUrl: null,
+  };
 };
 
 export const searchTrack = async (query) => {
   try {
-    const token = await getAccessToken();
-    
-    const response = await axios.get('https://api.spotify.com/v1/search', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
-        q: query,
-        type: 'track',
-        limit: 1,
-      },
-    });
+    const itunesResult = await fetchFromITunes(query);
+    if (itunesResult) return itunesResult;
 
-    if (response.data.tracks.items.length === 0) {
-      return null;
-    }
+    const mbResult = await fetchFromMusicBrainz(query);
+    if (mbResult) return mbResult;
 
-    const track = response.data.tracks.items[0];
-    
-    return {
-      title: track.name,
-      artist: track.artists[0].name,
-      album: track.album.name,
-      albumArt: track.album.images[0]?.url,
-      releaseDate: track.album.release_date,
-      previewUrl: track.preview_url,
-    };
+    return null;
   } catch (error) {
     console.error('Error searching track:', error);
     throw error;
