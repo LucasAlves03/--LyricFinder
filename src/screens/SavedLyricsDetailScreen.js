@@ -9,6 +9,11 @@ export default function SavedLyricsDetailScreen({ route }) {
   const { item } = route.params;
   const scrollY = useRef(new Animated.Value(0)).current;
 
+  const resolveImageSource = (albumArt) => {
+    if (!albumArt) return null;
+    return typeof albumArt === 'string' ? { uri: albumArt } : albumArt;
+  };
+
   const headerHeight = scrollY.interpolate({
     inputRange: [0, 100],
     outputRange: [0, 65],
@@ -40,7 +45,7 @@ export default function SavedLyricsDetailScreen({ route }) {
         <View style={styles.headerContent}>
           {item.albumArt && (
             <Image
-              source={{ uri: item.albumArt }}
+              source={resolveImageSource(item.albumArt)}
               style={styles.headerImage}
             />
           )}
@@ -66,7 +71,7 @@ export default function SavedLyricsDetailScreen({ route }) {
             {item.albumArt && (
               <View style={styles.albumArtContainer}>
                 <Image
-                  source={{ uri: item.albumArt }}
+                  source={resolveImageSource(item.albumArt)}
                   style={styles.albumArt}
                   resizeMode="cover"
                 />

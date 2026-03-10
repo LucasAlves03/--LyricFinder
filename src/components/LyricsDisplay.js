@@ -11,6 +11,11 @@ export default function LyricsDisplay({ trackData, lyrics, onRefresh, onScroll, 
   const [refreshing, setRefreshing] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
+  const resolveImageSource = (albumArt) => {
+    if (!albumArt) return null;
+    return typeof albumArt === 'string' ? { uri: albumArt } : albumArt;
+  };
+
   const backButtonOpacity = scrollY ? scrollY.interpolate({
     inputRange: [0, 50],
     outputRange: [1, 0],
@@ -102,7 +107,7 @@ export default function LyricsDisplay({ trackData, lyrics, onRefresh, onScroll, 
             {trackData.albumArt && (
               <View style={styles.albumArtContainer}>
                 <Image
-                  source={{ uri: trackData.albumArt }}
+                  source={resolveImageSource(trackData.albumArt)}
                   style={styles.albumArt}
                   resizeMode="cover"
                 />

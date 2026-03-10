@@ -8,10 +8,12 @@ import SearchScreen from './src/screens/SearchScreen';
 import SavedLyricsScreen from './src/screens/SavedLyricsScreen';
 import SavedLyricsDetailScreen from './src/screens/SavedLyricsDetailScreen';
 import AnimatedSplash from './src/components/AnimatedSplash';
+import SearchTabPreview from './src/components/SearchTabPreview';
 import { useState } from 'react';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+const USE_SEARCH_PREVIEW = false;
 
 function SavedStack() {
   return (
@@ -65,7 +67,7 @@ function TabNavigator() {
     >
       <Tab.Screen
         name="Search"
-        component={SearchScreen}
+        component={USE_SEARCH_PREVIEW ? SearchTabPreview : SearchScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Feather name="search" size={size} color={color} />

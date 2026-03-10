@@ -8,6 +8,11 @@ export default function SavedLyricsScreen({ navigation }) {
   const [savedLyrics, setSavedLyrics] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
+  const resolveImageSource = (albumArt) => {
+    if (!albumArt) return null;
+    return typeof albumArt === 'string' ? { uri: albumArt } : albumArt;
+  };
+
   useFocusEffect(
     useCallback(() => {
       loadSavedLyrics();
@@ -54,7 +59,7 @@ export default function SavedLyricsScreen({ navigation }) {
       activeOpacity={0.7}
     >
       <Image
-        source={{ uri: item.albumArt }}
+        source={resolveImageSource(item.albumArt)}
         style={styles.cardImage}
       />
       <View style={styles.cardContent}>

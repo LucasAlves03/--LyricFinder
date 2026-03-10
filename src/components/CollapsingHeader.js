@@ -1,6 +1,11 @@
 import { View, Text, Image, StyleSheet, Animated } from 'react-native';
 
 export default function CollapsingHeader({ scrollY, trackData }) {
+  const resolveImageSource = (albumArt) => {
+    if (!albumArt) return null;
+    return typeof albumArt === 'string' ? { uri: albumArt } : albumArt;
+  };
+
   const headerHeight = scrollY.interpolate({
     inputRange: [0, 150],
     outputRange: [0, 60],
@@ -26,7 +31,7 @@ export default function CollapsingHeader({ scrollY, trackData }) {
       <View style={styles.content}>
         {trackData?.albumArt && (
           <Image
-            source={{ uri: trackData.albumArt }}
+            source={resolveImageSource(trackData.albumArt)}
             style={styles.albumImage}
           />
         )}
