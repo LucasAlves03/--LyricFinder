@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, Image, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { BlurView } from 'expo-blur';
 import SearchBar from './SearchBar';
+import { Ionicons } from '@expo/vector-icons';
+
 
 const { height } = Dimensions.get('window');
 
@@ -256,7 +258,7 @@ export default function EmptyState({
         <View style={styles.previewSection}>
           <Text style={styles.sectionTitle}>Preview some popular lyrics</Text>
           {FEATURED_TRACKS.map((track) => (
-            <View key={track.id} style={styles.card}>
+            <BlurView intensity={45} tint="dark" key={track.id} style={styles.card}>
               <View style={styles.cardRow}>
                 <Image source={track.image} style={styles.cardImage} />
                 <View style={styles.cardInfo}>
@@ -268,11 +270,11 @@ export default function EmptyState({
                   </Text>
                 </View>
                 <TouchableOpacity style={styles.cardCta} onPress={() => handleOpenPreview(track)}>
-                  <Text style={styles.cardCtaText}>See</Text>
+                  <Text style={styles.cardCtaText}>View</Text>
                 </TouchableOpacity>
               </View>
 
-            </View>
+            </BlurView>
           ))}
         </View>
       </ScrollView>
@@ -297,7 +299,7 @@ export default function EmptyState({
                   </Text>
                 </View>
                 <TouchableOpacity onPress={handleClosePreview} style={styles.modalClose}>
-                  <Text style={styles.modalCloseText}>Close</Text>
+                  <Ionicons name="close-outline" style={styles.modalCloseText} size={34}/>
                 </TouchableOpacity>
               </View>
 
@@ -385,8 +387,10 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   card: {
-    backgroundColor: '#c8c2c2',
-    borderRadius: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.18)',
+    borderRadius: 15,
     padding: 12,
     marginBottom: 14,
   },
@@ -398,15 +402,16 @@ const styles = StyleSheet.create({
   cardImage: {
     width: 76,
     height: 76,
-    borderRadius: 10,
+    borderRadius: 5,
   },
   cardInfo: {
     flex: 1,
   },
   cardTitle: {
-    fontSize: 15,
+    fontSize: 17,
     fontWeight: '700',
-    color: '#2f2f2f',
+    color: '#ffffff',
+    
   },
   cardArtist: {
     fontSize: 13,
@@ -415,17 +420,21 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   cardCta: {
-    paddingHorizontal: 8,
+    paddingHorizontal: 30,
     paddingVertical: 6,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderRadius: 4,
   },
   cardCtaText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '700',
-    color: '#5b5b5b',
+    color: '#ababab',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: 'rgba(3, 2, 2, 0.95)',
     justifyContent: 'center',
     paddingHorizontal: 20,
   },
@@ -435,7 +444,7 @@ const styles = StyleSheet.create({
   modalContent: {
     borderRadius: 20,
     overflow: 'hidden',
-    maxHeight: '70%',
+    maxHeight: '80%',
   },
   modalGlass: {
     padding: 18,
@@ -449,28 +458,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
     gap: 12,
+    padding: 5,
+
   },
   modalTitleBlock: {
     flex: 1,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 25,
     fontWeight: '700',
     color: '#f7f7f7',
   },
   modalArtist: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
     color: '#cfcfcf',
     marginTop: 4,
   },
   modalClose: {
-    paddingHorizontal: 10,
     paddingVertical: 6,
   },
   modalCloseText: {
     color: '#e5e5e5',
-    fontSize: 13,
     fontWeight: '600',
   },
   modalLyricsBox: {

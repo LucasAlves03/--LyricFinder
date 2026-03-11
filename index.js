@@ -10,6 +10,7 @@ import SavedLyricsDetailScreen from './src/screens/SavedLyricsDetailScreen';
 import AnimatedSplash from './src/components/AnimatedSplash';
 import SearchTabPreview from './src/components/SearchTabPreview';
 import { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 // attach to search => Tame impala the less i know the better
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
