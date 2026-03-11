@@ -1,15 +1,12 @@
-import { View, StyleSheet, KeyboardAvoidingView, Platform, Animated, TouchableOpacity, Text } from 'react-native';
-import { BlurView } from 'expo-blur'
+import { View, StyleSheet, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState, useRef, useEffect } from 'react';
-import Navbar from '../components/Navbar';
-import SearchBar from '../components/SearchBar';
 import LyricsDisplay from '../components/LyricsDisplay';
 import SkeletonLoader from '../components/SkeletonLoader';
 import ErrorMessage from '../components/ErrorMessage';
 import EmptyState from '../components/EmptyState';
 import CollapsingHeader from '../components/CollapsingHeader';
-import { searchTrack } from '../services/spotifyApi';
+import { searchTrack } from '../services/CoverApi';
 import { getLyrics } from '../services/LyricsApi';
 
 
@@ -88,18 +85,6 @@ export default function HomeScreen({ mockMode = false, mockData, mockLyrics } = 
   const [useMockSearch, setUseMockSearch] = useState(false);
   
   const scrollY = useRef(new Animated.Value(0)).current;
-  
-  const searchBarTranslateY = scrollY.interpolate({
-    inputRange: [0, 100],
-    outputRange: [0, -100],
-    extrapolate: 'clamp'
-  });
-
-  const searchBarOpacity = scrollY.interpolate({
-    inputRange: [0, 50],
-    outputRange: [1, 0],
-    extrapolate: 'clamp'
-  })
 
   useEffect(() => {
     if (!mockMode) return;
@@ -254,33 +239,6 @@ export default function HomeScreen({ mockMode = false, mockData, mockLyrics } = 
 return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.container}>
-        
-        {!loading && !error && (
-          <Animated.View 
-            style={[
-              styles.searchBarContainer,
-              trackData && {
-                transform: [{ translateY: searchBarTranslateY }],
-                opacity: searchBarOpacity,
-              }
-            ]}
-            pointerEvents={trackData && scrollY._value > 50 ? 'none' : 'auto'}
-          >
-            <SearchBar
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              onSubmit={handleSearch}
-            />
-            <TouchableOpacity
-              style={[styles.mockToggle, useMockSearch && styles.mockToggleActive]}
-              onPress={() => setUseMockSearch((prev) => !prev)}
-            >
-              <Text style={styles.mockToggleText}>
-                {useMockSearch ? 'Mock search: ON' : 'Mock search: OFF'}
-              </Text>
-            </TouchableOpacity>
-          </Animated.View>
-        )}
 
         {trackData && <CollapsingHeader scrollY={scrollY} trackData={trackData} />}
 
@@ -295,7 +253,15 @@ return (
           />
         )}
 
-        {!loading && !error && !trackData && <EmptyState />}
+        {!loading && !error && !trackData && (
+          <EmptyState
+            searchQuery={searchQuery}
+            onChangeText={setSearchQuery}
+            onSubmit={handleSearch}
+            useMockSearch={useMockSearch}
+            onToggleMockSearch={() => setUseMockSearch((prev) => !prev)}
+          />
+        )}
 
         {!loading && !error && trackData && (
           <LyricsDisplay 
@@ -316,30 +282,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1a1a1a',
-  },
-  searchBarContainer: {
-    backgroundColor: '#1a1a1a',
-    
-  },
-  mockToggle: {
-    alignSelf: 'center',
-    marginBottom: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-    backgroundColor: '#2a2a2a',
-    borderWidth: 1,
-    borderColor: '#3a3a3a',
-  },
-  mockToggleActive: {
-    backgroundColor: '#3a3a3a',
-    borderColor: '#667eea',
-  },
-  mockToggleText: {
-    color: '#d0d0d0',
-    fontSize: 12,
-    fontWeight: '600',
-    letterSpacing: 0.2,
   },
 });
 

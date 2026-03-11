@@ -11,7 +11,15 @@ const SONG_RECOMMENDATIONS = [
   'Billie Eilish - Bad Guy',
 ];
 
-export default function SearchBar({ value, onChangeText, onSubmit }) {
+export default function SearchBar({
+  value,
+  onChangeText,
+  onSubmit,
+  containerStyle,
+  inputStyle,
+  iconColor = '#888',
+  placeholderTextColor = '#666',
+}) {
   const [placeholder, setPlaceholder] = useState('');
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(true);
@@ -53,12 +61,12 @@ export default function SearchBar({ value, onChangeText, onSubmit }) {
   }, [charIndex, isTyping, currentSongIndex, value]);
 
   return (
-    <View style={styles.container}>
-      <Feather name="search" size={20} color="#888" style={styles.icon} />
+    <View style={[styles.container, containerStyle]}>
+      <Feather name="search" size={20} color={iconColor} style={styles.icon} />
       <TextInput
-        style={styles.input}
+        style={[styles.input, inputStyle]}
         placeholder={placeholder || ' '}
-        placeholderTextColor="#666"
+        placeholderTextColor={placeholderTextColor}
         value={value}
         onChangeText={onChangeText}
         onSubmitEditing={onSubmit}
