@@ -12,9 +12,7 @@ const FEATURED_TRACKS = [
     title: 'Astrothunder',
     artist: 'Travis Scoot',
     image: require('../../assets/Images/RandomCover.png'),
-    preview: `ASTROTHUNDER
-Travis Scott
-
+    preview: `
 (High off life)
 (Yeah)
 
@@ -49,9 +47,7 @@ Yeah, yeah, yeah' `,
     title: 'Let It Happen',
     artist: 'Tame Impala',
     image: require('../../assets/Images/RandomCover2.jpg'),
-    preview: `Let It Happen
-Tame Impala
-
+    preview: `
 It's always around me, all this noise
 But not nearly as loud as the voice saying
 Let it happen, let it happen (it's gonna feel so good)
@@ -106,9 +102,7 @@ Take the next ticket to take the next train (oh, but maybe I was ready all along
     title: 'Evil Jordan',
     artist: 'Playboi Carti',
     image: require('../../assets/Images/RandomCover3.jpg'),
-    preview: `EVIL J0RDAN
-Playboi Carti
-
+    preview: `
 Begging on her knees to be popular
 
 First I go whip out the boat
@@ -156,9 +150,7 @@ I am the music`,
     title: 'Cardigan',
     artist: 'Don Toliver',
     image: require('../../assets/Images/RandomCover4.jpg'),
-    preview: `Cardigan
-Don Toliver
-
+    preview: `
 I'm finna stand tall in it, I'm all in it (uh-uh)
 You be on my back like a cardigan (cardigan)
 Call her again, I'm in love with your friend (call her again)
@@ -379,9 +371,9 @@ const styles = StyleSheet.create({
   cardCta: {
     paddingHorizontal: 30,
     paddingVertical: 6,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderStyle: 'solid',
+    // borderColor: '#ffffff1c',
+    // borderWidth: 1,
+    // borderStyle: 'solid',
     borderRadius: 4,
   },
   cardCtaText: {

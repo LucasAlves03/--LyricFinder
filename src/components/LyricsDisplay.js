@@ -113,7 +113,7 @@ export default function LyricsDisplay({ trackData, lyrics, onRefresh, onScroll, 
               <View style={styles.heroPlaceholder} />
             )}
 
-            <View style={styles.heroTextBlock}>
+            <LinearGradient colors={['transparent', 'rgb(0, 0, 0)']} style={styles.heroTextBlock}>
               <Text style={styles.title}>{trackData.title}</Text>
               <Text style={styles.artist}>{trackData.artist}</Text>
               <View style={styles.metaRow}>
@@ -134,7 +134,7 @@ export default function LyricsDisplay({ trackData, lyrics, onRefresh, onScroll, 
               </TouchableOpacity>
             )}
           </View>
-            </View>
+            </LinearGradient>
             
           </View>
 
@@ -210,10 +210,10 @@ const styles = StyleSheet.create({
   heroTextBlock: {
     position: 'absolute',
     bottom: -10,
-    backgroundColor: '#4741414d',
+    backgroundColor: 'transparent',
     width: '100%',
     padding: 10,
-    zIndex: 99
+    zIndex: 99,
   },
   title: {
     fontSize: 28,
@@ -224,12 +224,14 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
     textDecorationStyle: 'solid',
     textDecorationColor: 'red',
+    
   },
   artist: {
     fontSize: 16,
     fontWeight: '700',
     color: '#f0e9e9',
     textAlign: 'left',
+    
     
   },
   metaRow: {
@@ -251,7 +253,7 @@ const styles = StyleSheet.create({
     bottom: 25,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#667eea',
+    backgroundColor: '#c10606',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 18,

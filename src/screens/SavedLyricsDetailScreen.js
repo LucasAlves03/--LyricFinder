@@ -1,9 +1,8 @@
-import { View, Text, Image, Animated, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, Image, ImageBackground, Animated, StyleSheet, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { useRef } from 'react';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 export default function SavedLyricsDetailScreen({ route }) {
   const { item } = route.params;
@@ -67,36 +66,27 @@ export default function SavedLyricsDetailScreen({ route }) {
         scrollEventThrottle={16}
       >
         <View style={styles.mainContainer}>
-          <View style={styles.albumSection}>
-            {item.albumArt && (
-              <View style={styles.albumArtContainer}>
-                <Image
-                  source={resolveImageSource(item.albumArt)}
-                  style={styles.albumArt}
-                  resizeMode="cover"
-                />
-              </View>
+          <View style={styles.heroContainer}>
+            {item.albumArt ? (
+              <ImageBackground
+                source={resolveImageSource(item.albumArt)}
+                style={styles.heroImage}
+                imageStyle={styles.heroImageInner}
+              >
+              </ImageBackground>
+            ) : (
+              <View style={styles.heroPlaceholder} />
             )}
 
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.artist}>{item.artist}</Text>
-            <Text style={styles.album}>{item.album}</Text>
+            <LinearGradient colors={['transparent', 'rgb(0, 0, 0)']} style={styles.heroTextBlock}>
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.artist}>{item.artist}</Text>
+            </LinearGradient>
           </View>
 
-          <LinearGradient
-            colors={['#212529', '#212527', '#212528']}
-            style={styles.lyricsSection}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            <View style={styles.glassContainer}>
-              <BlurView intensity={30} tint="dark" style={styles.blurContainer}>
-                <View style={styles.lyricsContainer}>
-                  <Text style={styles.lyrics}>{item.lyrics}</Text>
-                </View>
-              </BlurView>
-            </View>
-          </LinearGradient>
+          <View style={styles.lyricsSection}>
+            <Text style={styles.lyrics}>{item.lyrics}</Text>
+          </View>
         </View>
       </Animated.ScrollView>
     </View>
@@ -104,9 +94,9 @@ export default function SavedLyricsDetailScreen({ route }) {
 }
 
 const styles = StyleSheet.create({
-   wrapper: {
+  wrapper: {
     flex: 1,
-    backgroundColor: '#212529',
+    backgroundColor: '#0c0c0c',
   },
   collapsingHeader: {
     position: 'absolute',
@@ -149,68 +139,66 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#212529',
+    backgroundColor: '#0c0c0c',
   },
   mainContainer: {
     minHeight: height,
   },
-  albumSection: {
-    backgroundColor: '#212529',
-    alignItems: 'center',
-    paddingTop: 20,
-    paddingBottom: 30,
-    paddingHorizontal: 20,
+  heroContainer: {
+    height: Math.round(height * 0.55),
+    overflow: 'hidden',
+    backgroundColor: '#141414',
   },
-  albumArtContainer: {
-    marginBottom: 25,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
-    elevation: 15,
+  heroImage: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    height: '100%',
+    width: '100%',
   },
-  albumArt: {
-    width: width * 0.65,
-    height: width * 0.65,
-    borderRadius: 15,
+  heroImageInner: {
+    resizeMode: 'cover',
+  },
+  heroPlaceholder: {
+    flex: 1,
+    backgroundColor: '#1b1b1b',
+  },
+  heroTextBlock: {
+    position: 'absolute',
+    bottom: 0,
+    backgroundColor: 'transparent',
+    width: '100%',
+    padding: 10,
+    zIndex: 99,
   },
   title: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#ffffff',
-    textAlign: 'center',
-    marginBottom: 8,
+    color: '#fffcfc',
+    textAlign: 'left',
+    marginBottom: 2,
+    letterSpacing: 0.4,
   },
   artist: {
-    fontSize: 18,
-    color: '#d0d0d0',
-    textAlign: 'center',
-    marginBottom: 4,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#f0e9e9',
+    textAlign: 'left',
   },
   album: {
     fontSize: 14,
-    color: '#a0a0a0',
-    textAlign: 'center',
+    color: '#9a9a9a',
+    textAlign: 'left',
+    marginTop: 6,
   },
   lyricsSection: {
     width: '100%',
-    paddingTop: 0,
-    paddingBottom: 0,
-  },
-  glassContainer: {
-    overflow: 'hidden',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-  },
-  blurContainer: {
-    overflow: 'hidden',
-  },
-  lyricsContainer: {
-    paddingHorizontal: 25,
-    paddingVertical: 25,
+    paddingHorizontal: 22,
+    paddingBottom: 40,
+    paddingTop: 8,
   },
   lyrics: {
-    fontSize: 25,
-    lineHeight: 28,
+    fontSize: 18,
+    lineHeight: 26,
     color: '#ffffff',
     width: '100%',
     letterSpacing: 0.3,
