@@ -236,6 +236,19 @@ export default function HomeScreen({ mockMode = false, mockData, mockLyrics } = 
     setSearchQuery('');
   };
 
+  const handlePreviewTrack = (track) => {
+    if (!track) return;
+    setError(null);
+    setLoading(false);
+    setTrackData({
+      title: track.title,
+      artist: track.artist,
+      album: track.album || 'Single',
+      albumArt: track.image,
+    });
+    setLyrics(track.preview || '');
+  };
+
 return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.container}>
@@ -260,6 +273,7 @@ return (
             onSubmit={handleSearch}
             useMockSearch={useMockSearch}
             onToggleMockSearch={() => setUseMockSearch((prev) => !prev)}
+            onPreviewTrack={handlePreviewTrack}
           />
         )}
 

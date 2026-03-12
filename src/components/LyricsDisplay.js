@@ -1,11 +1,10 @@
-import { View, Text, Image, Animated, StyleSheet, Dimensions, RefreshControl, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, ImageBackground, Animated, StyleSheet, Dimensions, RefreshControl, TouchableOpacity, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Feather } from '@expo/vector-icons';
 import { saveLyrics, isLyricsSaved } from '../services/storageService';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 export default function LyricsDisplay({ trackData, lyrics, onRefresh, onScroll, onBack, scrollY }) {
   const [refreshing, setRefreshing] = useState(false);
@@ -79,12 +78,12 @@ export default function LyricsDisplay({ trackData, lyrics, onRefresh, onScroll, 
         ]}
         pointerEvents={scrollY && scrollY._value > 50 ? 'none' : 'auto'}
       >
-        <BlurView intensity={80} tint="dark" style={styles.backButton}>
+        <View style={styles.backButton}>
           <TouchableOpacity style={styles.backButtonInner} onPress={onBack}>
-            <Feather name="arrow-left" size={24} color="#fff" />
+            <Feather name="arrow-left" size={22} color="#fff" />
             <Text style={styles.backButtonText}>Back</Text>
           </TouchableOpacity>
-        </BlurView>
+        </View>
       </Animated.View>
 
       <Animated.ScrollView 
@@ -102,22 +101,22 @@ export default function LyricsDisplay({ trackData, lyrics, onRefresh, onScroll, 
         }
       >
         <View style={styles.mainContainer}>
-          <View style={styles.albumSection}>
-            {/* Album Art */}
-            {trackData.albumArt && (
-              <View style={styles.albumArtContainer}>
-                <Image
-                  source={resolveImageSource(trackData.albumArt)}
-                  style={styles.albumArt}
-                  resizeMode="cover"
-                />
-              </View>
+          <View style={styles.heroContainer}>
+            {trackData.albumArt ? (
+              <ImageBackground
+                source={resolveImageSource(trackData.albumArt)}
+                style={styles.heroImage}
+                imageStyle={styles.heroImageInner}
+              >
+              </ImageBackground>
+            ) : (
+              <View style={styles.heroPlaceholder} />
             )}
 
-            <Text style={styles.title}>{trackData.title}</Text>
-            <Text style={styles.artist}>{trackData.artist}</Text>
-            <Text style={styles.album}>{trackData.album}</Text>
-
+            <View style={styles.heroTextBlock}>
+              <Text style={styles.title}>{trackData.title}</Text>
+              <Text style={styles.artist}>{trackData.artist}</Text>
+              <View style={styles.metaRow}>
             {lyrics && (
               <TouchableOpacity 
                 style={[styles.saveButton, isSaved && styles.saveButtonActive]} 
@@ -126,7 +125,7 @@ export default function LyricsDisplay({ trackData, lyrics, onRefresh, onScroll, 
               >
                 <Feather 
                   name={isSaved ? "check" : "bookmark"} 
-                  size={20} 
+                  size={18} 
                   color="#fff" 
                 />
                 <Text style={styles.saveButtonText}>
@@ -135,25 +134,19 @@ export default function LyricsDisplay({ trackData, lyrics, onRefresh, onScroll, 
               </TouchableOpacity>
             )}
           </View>
-
-          <LinearGradient
-            colors={['#212529', '#212527', '#212528']}
-            style={styles.lyricsSection}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            <View style={styles.glassContainer}>
-              <BlurView intensity={30} tint="dark" style={styles.blurContainer}>
-                <View style={styles.lyricsContainer}>
-                  {lyrics ? (
-                    <Text style={styles.lyrics}>{lyrics}</Text>
-                  ) : (
-                    <Text style={styles.noLyrics}>Lyrics not found</Text>
-                  )}
-                </View>
-              </BlurView>
             </View>
-          </LinearGradient>
+            
+          </View>
+
+          
+
+          <View style={styles.lyricsSection}>
+            {lyrics ? (
+              <Text style={styles.lyrics}>{lyrics}</Text>
+            ) : (
+              <Text style={styles.noLyrics}>Lyrics not found</Text>
+            )}
+          </View>
         </View>
       </Animated.ScrollView>
     </View>
@@ -163,16 +156,18 @@ export default function LyricsDisplay({ trackData, lyrics, onRefresh, onScroll, 
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
+    
   },
   backButtonContainer: {
     position: 'absolute',
     top: 10,
     left: 15,
     zIndex: 1000,
+    
   },
   backButton: {
     borderRadius: 20,
-    overflow: 'hidden',
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
   },
   backButtonInner: {
     flexDirection: 'row',
@@ -188,94 +183,105 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#212529',
+    backgroundColor: '#0c0c0c',
   },
   mainContainer: {
     minHeight: height,
   },
-  albumSection: {
-    backgroundColor: '#212529',
-    alignItems: 'center',
-    paddingTop: 60,
-    paddingBottom: 30,
-    paddingHorizontal: 20,
-    
+  heroContainer: {
+    height: Math.round(height * 0.55),
+    overflow: 'hidden',
+    backgroundColor: '#141414',
   },
-  albumArtContainer: {
-    marginBottom: 25,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
-    elevation: 15,
+  heroImage: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    height: '100%',
+    width: '100%',
   },
-  albumArt: {
-    width: width * 0.65,
-    height: width * 0.65,
-    borderRadius: 15,
+  heroImageInner: {
+    resizeMode: 'cover',
+  },
+  
+  heroPlaceholder: {
+    flex: 1,
+    backgroundColor: '#1b1b1b',
+  },
+  heroTextBlock: {
+    position: 'absolute',
+    bottom: -10,
+    backgroundColor: '#4741414d',
+    width: '100%',
+    padding: 10,
+    zIndex: 99
   },
   title: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#ffffff',
-    textAlign: 'center',
-    marginBottom: 8,
+    color: '#fffcfc',
+    textAlign: 'left',
+    marginBottom: 2,
+    letterSpacing: 0.4,
+    textDecorationStyle: 'solid',
+    textDecorationColor: 'red',
   },
   artist: {
-    fontSize: 18,
-    color: '#d0d0d0',
-    textAlign: 'center',
-    marginBottom: 4,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#f0e9e9',
+    textAlign: 'left',
+    
+  },
+  metaRow: {
+    paddingHorizontal: 22,
+    paddingTop: 14,
+    paddingBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
   },
   album: {
     fontSize: 14,
-    color: '#a0a0a0',
-    textAlign: 'center',
-    marginBottom: 20,
+    color: '#9a9a9a',
   },
   saveButton: {
+    position: 'absolute',
+    right: 15,
+    bottom: 25,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#667eea',
-    paddingHorizontal: 25,
-    paddingVertical: 12,
-    borderRadius: 25,
-    gap: 8,
-    marginTop: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 18,
+    gap: 6,
   },
   saveButtonActive: {
     backgroundColor: '#4CAF50',
   },
   saveButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: '600',
   },
   lyricsSection: {
     width: '100%',
-  },
-  glassContainer: {
-    overflow: 'hidden',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-  },
-  blurContainer: {
-    overflow: 'hidden',
-  },
-  lyricsContainer: {
-    paddingHorizontal: 25,
-    paddingVertical: 25,
+    paddingHorizontal: 22,
+    paddingBottom: 40,
+    paddingTop: 8,
   },
   lyrics: {
-    fontSize: 25,
-    lineHeight: 28,
+    fontSize: 18,
+    lineHeight: 26,
     color: '#ffffff',
     width: '100%',
     letterSpacing: 0.3,
   },
   noLyrics: {
-    fontSize: 28,
+    fontSize: 18,
     color: '#d0d0d0',
-    textAlign: 'center',
+    textAlign: 'left',
     fontStyle: 'italic',
   },
 });

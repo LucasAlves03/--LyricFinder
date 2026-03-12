@@ -7,8 +7,8 @@ export default function CollapsingHeader({ scrollY, trackData }) {
   };
 
   const headerHeight = scrollY.interpolate({
-    inputRange: [0, 150],
-    outputRange: [0, 60],
+    inputRange: [0, 100],
+    outputRange: [0, 65],
     extrapolate: 'clamp',
   });
 
@@ -51,26 +51,24 @@ export default function CollapsingHeader({ scrollY, trackData }) {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 60,
+    top: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#1a1a1a',
     zIndex: 100,
-    overflow: 'hidden',
   },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
-    paddingVertical: 15, 
-    height: '100%',
+    paddingVertical: 16,
+    backgroundColor: '#101010',
+
   },
   albumImage: {
-    width: 65,
-    height: 65,
+    width: 75,
+    height: 75,
     borderRadius: 8,
     marginRight: 12,
-    marginBottom:20,
   },
   textContainer: {
     flex: 1,
@@ -80,7 +78,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: '600',
     color: '#fff',
-    marginBottom: 3, 
+    marginBottom: 3,
   },
   artist: {
     fontSize: 15,

@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, Image, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, Dimensions, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { BlurView } from 'expo-blur';
 import SearchBar from './SearchBar';
-import { Ionicons } from '@expo/vector-icons';
 
 
 const { height } = Dimensions.get('window');
@@ -212,15 +211,12 @@ export default function EmptyState({
   onSubmit,
   useMockSearch,
   onToggleMockSearch,
+  onPreviewTrack,
 }) {
-  const [selectedTrack, setSelectedTrack] = useState(null);
-
   const handleOpenPreview = (track) => {
-    setSelectedTrack(track);
-  };
-
-  const handleClosePreview = () => {
-    setSelectedTrack(null);
+    if (onPreviewTrack) {
+      onPreviewTrack(track);
+    }
   };
 
   return (
@@ -278,45 +274,6 @@ export default function EmptyState({
           ))}
         </View>
       </ScrollView>
-
-      <Modal
-        visible={!!selectedTrack}
-        transparent
-        animationType="fade"
-        onRequestClose={handleClosePreview}
-      >
-        <View style={styles.modalOverlay}>
-          <TouchableOpacity style={styles.modalBackdrop} onPress={handleClosePreview} />
-          <View style={styles.modalContent}>
-            <BlurView intensity={35} tint="dark" style={styles.modalGlass}>
-              <View style={styles.modalHeader}>
-                <View style={styles.modalTitleBlock}>
-                  <Text style={styles.modalTitle} numberOfLines={1}>
-                    {selectedTrack?.title}
-                  </Text>
-                  <Text style={styles.modalArtist} numberOfLines={1}>
-                    {selectedTrack?.artist}
-                  </Text>
-                </View>
-                <TouchableOpacity onPress={handleClosePreview} style={styles.modalClose}>
-                  <Ionicons name="close-outline" style={styles.modalCloseText} size={34}/>
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.modalLyricsBox}>
-                <Text
-                  style={[
-                    styles.modalLyrics,
-                    !selectedTrack?.preview && styles.modalLyricsPlaceholder,
-                  ]}
-                >
-                  {selectedTrack?.preview || 'Add lyrics preview here'}
-                </Text>
-              </View>
-            </BlurView>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
@@ -431,70 +388,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     color: '#ababab',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(3, 2, 2, 0.95)',
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-  },
-  modalBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  modalContent: {
-    borderRadius: 20,
-    overflow: 'hidden',
-    maxHeight: '80%',
-  },
-  modalGlass: {
-    padding: 18,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.18)',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-    gap: 12,
-    padding: 5,
-
-  },
-  modalTitleBlock: {
-    flex: 1,
-  },
-  modalTitle: {
-    fontSize: 25,
-    fontWeight: '700',
-    color: '#f7f7f7',
-  },
-  modalArtist: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#cfcfcf',
-    marginTop: 4,
-  },
-  modalClose: {
-    paddingVertical: 6,
-  },
-  modalCloseText: {
-    color: '#e5e5e5',
-    fontWeight: '600',
-  },
-  modalLyricsBox: {
-    borderRadius: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-  },
-  modalLyrics: {
-    fontSize: 16,
-    lineHeight: 22,
-    color: '#f4f4f4',
-  },
-  modalLyricsPlaceholder: {
-    color: '#b5b5b5',
-    fontStyle: 'italic',
   },
 });
