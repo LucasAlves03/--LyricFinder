@@ -1,12 +1,13 @@
 import { View, Text, Image, ImageBackground, Animated, StyleSheet, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 
 const { height } = Dimensions.get('window');
 
 export default function SavedLyricsDetailScreen({ route }) {
   const { item } = route.params;
   const scrollY = useRef(new Animated.Value(0)).current;
+  const enter = useRef(new Animated.Value(0)).current;
 
   const resolveImageSource = (albumArt) => {
     if (!albumArt) return null;
@@ -29,6 +30,15 @@ export default function SavedLyricsDetailScreen({ route }) {
     [{ nativeEvent: { contentOffset: { y: scrollY} } } ],
     { useNativeDriver: false }
   )
+
+  useEffect(() => {
+    enter.setValue(0);
+    Animated.timing(enter, {
+      toValue: 1,
+      duration: 260,
+      useNativeDriver: true,
+    }).start();
+  }, [enter, item?.title, item?.artist]);
 
  return (
     <View style={styles.wrapper}>
@@ -65,7 +75,22 @@ export default function SavedLyricsDetailScreen({ route }) {
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
-        <View style={styles.mainContainer}>
+        <Animated.View
+          style={[
+            styles.mainContainer,
+            {
+              opacity: enter,
+              transform: [
+                {
+                  scale: enter.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0.98, 1],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
           <View style={styles.heroContainer}>
             {item.albumArt ? (
               <ImageBackground
@@ -87,7 +112,7 @@ export default function SavedLyricsDetailScreen({ route }) {
           <View style={styles.lyricsSection}>
             <Text style={styles.lyrics}>{item.lyrics}</Text>
           </View>
-        </View>
+        </Animated.View>
       </Animated.ScrollView>
     </View>
   );
@@ -106,7 +131,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1a1a1a',
     zIndex: 100,
    
-    height:110,
+    height:10,
 
   },
   headerContent: {
@@ -143,6 +168,7 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     minHeight: height,
+    backgroundColor: '#0c0c0c',
   },
   heroContainer: {
     height: Math.round(height * 0.55),

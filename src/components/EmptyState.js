@@ -50,52 +50,63 @@ Yeah, yeah, yeah' `,
     preview: `
 It's always around me, all this noise
 But not nearly as loud as the voice saying
-Let it happen, let it happen (it's gonna feel so good)
-Just let it happen, let it happen
+"Let it happen, let it happen" (it's gonna feel so good)
+"Just let it happen, let it happen"
 
 All this running around
-Trying to cover my shadow
+Tryin' to cover my shadow
 A notion growing inside
-Now all the others seem shallow
+Now, all the others seem shallow
+
 All this running around
 Bearing down on my shoulders
 I can hear an alarm
-Must be morning
+Must be a morning
 
 I heard about a whirlwind that's coming 'round
-It's gonna carry off all that isn't bound and
-When it happens, when it happens (I won't be holding on)
+It's gonna carry off all that isn't bound
+And when it happens, when it happens (I won't be holding on)
 So let it happen, let it happen
 
 All this running around
 I can't fight it much longer
-Something's trying to get out
+Something's tryin' to get out
 And it's never been closer
+
 If my take-off fails
 Make up some other story
-But if I never come back
+If I never come back
 Tell my mother I'm sorry
 
-I cuh-nuh duh-wuh, you wuh-nuh scri-wih
-Try-guh-duh do-wee, try to pun-stoo-wee
-You wuh-nuh thinkin' that I wuh-luh do-wee
-They be lovin' someone and I wuh-nuh stuh-wee
-Take the next ticket to take the next train
-Why would I do-wee, eh you wuh tun-tun na
+I cannot vanish, you will not scare me
+Try to get through it, try to push through it
+You were not thinking that I will not do it
+They be lovin' someone and I'm another story
+Take the next ticket, get the next train
+Why would I do it? Anyone'd think that
 
-I cuh-nuh duh-wuh, you wuh-nuh scri-wih
-Try-guh-duh do-wee, try to pun-stoo-wee
-You wuh-nuh thinkin' that I wuh-nuh do-wee
-They be lovin' someone and I wuh-luh stuh-wee (baby, now I'm ready, moving on)
-Take the next ticket to take the next train (oh, but maybe I was ready all along)
-Why would I do-wee, eh you wuh tun-tun na (oh, I'm ready for the moment and the sound)
+I cannot vanish, you will not scare me
+Try to get through it, try to push through it
+You were not thinking that I will not do it
+They be lovin' someone and I'm another story
+Take the next ticket, get the next train
+Why would I do it? Anyone'd think that
 
-I cuh-nuh duh-wuh, you wuh-nuh scri-wih (oh, but maybe I was ready all along)
-Try-guh-duh do-wee, try to pun-stoo-wee (oh, baby, now I'm ready, moving on)
-You wuh-nuh thinkin' that I wuh-luh do-wee (oh, but maybe I was ready all along)
-They be lovin' someone and I wuh-nuh stuh-wee (oh, I'm ready for the moment and the sound)
-Take the next ticket to take the next train (oh, but maybe I was ready all along)
-(Oh, baby)`,
+Try to get through it, try to push through it
+You were not thinking that I will not do it
+They be lovin' someone and I'm another story
+Take the next ticket, get the next train
+Why would I do it? Anyone'd think that
+
+Baby, now I'm ready, moving on
+Oh, but maybe I was ready all along
+Oh, I'm ready for the moment and the sound
+Oh, but maybe I was ready all along
+
+Baby, now I'm ready, moving on
+Oh, but maybe I was ready all along
+Oh, I'm ready for the moment and the sound
+Oh, but maybe I was ready all along`,
   },
   {
     id: 3,
@@ -117,6 +128,7 @@ I'm a emo thug in my phase
 Syrup, syrup, syrup, syrup, tell her to go change
 Monkey nuts, hold me, baby, I got on two chains
 Roll another blunt and I might motherfuckin' faint
+
 Spin on the block, have a pussy nigga stained
 I just put on my boots, ain't worried 'bout no rain
 Put a nigga down, Channel 2 front page
@@ -125,6 +137,7 @@ Yeah, I told you, yeah, about that money, shit get strange
 Fully loaded Jag, hold up, baby, Jordan paid
 I put duct tape on my switch, perfect aim
 They can't put me in no genre, baby, 'cause I changed the game
+
 We fuckin' on the same ho, but we not the same
 Disrespect the 5, I put your ass in the food chain (Swamp Izzo)
 Bitch keep callin' my phone, she sayin' Ms. Jackson goin' through her brain (Carti)
@@ -132,6 +145,7 @@ We was just outside dancin', movin' on molly, feelin' insane (he's comin')
 I fucked the bitch so nasty, we go Sephora, yeah, then we go Pink
 She not so fuckin' toxic, and she care about what I think
 She's nothin' like no other bitches, she care about what I drink
+
 I think she's a fling
 I think she's a playmaker
 She should be on my team
@@ -159,6 +173,7 @@ It's evident that you ready to ride (ready to ride)
 Hop up in my Jeep and put your pride to the side (pride to the side)
 Go against the gang, you must be ready to hide (ready to hide)
 Swangin' on the corner, bang my tape till it pop (tape till it pop)
+
 I thought I was a goner, pledged to your honor
 Burn marijuana, these diamonds is on her
 Hotter than the sauna, I met her at Salata
@@ -177,10 +192,12 @@ It's evident that you ready to ride (ready to ride)
 Hop up in my Jeep and put your pride to the side (pride to the side)
 Go against the gang, you must be ready to hide (ready to hide)
 Swangin' on the corner, bang my tape till it pop (tape till it pop)
+
 I thought I was a goner, pledged to your honor
 Burn marijuana, these diamonds is on her
 Hotter than the sauna, I met her at Salata
 Bought lil baby Prada, she popped it for the dollar
+
 Don't stick around, you should save yourself (save yourself)
 But you can hit my phone if you need some help (needed some help)
 Don't stick around, you should save yourself (save yourself)
@@ -281,7 +298,7 @@ const styles = StyleSheet.create({
     minHeight: height - 120,
   },
   header: {
-    paddingTop: 6,
+    paddingTop: 16,
     paddingBottom: 8,
   },
   title: {

@@ -1,11 +1,10 @@
-import { View, StyleSheet, Animated } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState, useRef, useEffect } from 'react';
-import LyricsDisplay from '../components/LyricsDisplay';
+import { useState, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import SkeletonLoader from '../components/SkeletonLoader';
 import ErrorMessage from '../components/ErrorMessage';
 import EmptyState from '../components/EmptyState';
-import CollapsingHeader from '../components/CollapsingHeader';
 import { searchTrack } from '../services/CoverApi';
 import { getLyrics } from '../services/LyricsApi';
 
@@ -77,22 +76,30 @@ const MOCK_LIBRARY = [
 ];
 
 export default function HomeScreen({ mockMode = false, mockData, mockLyrics } = {}) {
+  const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
-  const [trackData, setTrackData] = useState(mockMode ? (mockData || DEFAULT_MOCK_TRACK) : null);
-  const [lyrics, setLyrics] = useState(mockMode ? (mockLyrics || DEFAULT_MOCK_LYRICS) : '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [useMockSearch, setUseMockSearch] = useState(false);
-  
-  const scrollY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (!mockMode) return;
-    setTrackData(mockData || DEFAULT_MOCK_TRACK);
-    setLyrics(mockLyrics || DEFAULT_MOCK_LYRICS);
     setError(null);
     setLoading(false);
   }, [mockMode]);
+
+  useEffect(() => {
+    const parent = navigation.getParent();
+    if (!parent) return undefined;
+
+    const unsubscribe = parent.addListener('tabPress', () => {
+      if (!navigation.isFocused()) return;
+      setError(null);
+      setSearchQuery('');
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const findMockMatch = (query) => {
     const normalized = query.trim().toLowerCase();
@@ -120,22 +127,24 @@ export default function HomeScreen({ mockMode = false, mockData, mockLyrics } = 
     if (useMockSearch && mockMatch) {
       setError(null);
       setLoading(false);
-      setTrackData(mockMatch.trackData);
-      setLyrics(mockMatch.lyrics || '');
+      navigation.navigate('SearchLyrics', {
+        trackData: mockMatch.trackData,
+        lyrics: mockMatch.lyrics || '',
+      });
       return;
     }
     if (mockMode) {
       setError(null);
       setLoading(false);
-      setTrackData(mockData || DEFAULT_MOCK_TRACK);
-      setLyrics(mockLyrics || DEFAULT_MOCK_LYRICS);
+      navigation.navigate('SearchLyrics', {
+        trackData: mockData || DEFAULT_MOCK_TRACK,
+        lyrics: mockLyrics || DEFAULT_MOCK_LYRICS,
+      });
       return;
     }
     if (!searchQuery.trim()) return;
 
     setLoading(true);
-    setTrackData(null);
-    setLyrics('');
     setError(null);
 
     try {
@@ -157,11 +166,12 @@ export default function HomeScreen({ mockMode = false, mockData, mockLyrics } = 
         return;
       }
 
-      setTrackData(track);
-
       try {
         const fetchedLyrics = await getLyrics(track.artist, track.title);
-        setLyrics(fetchedLyrics || '');
+        navigation.navigate('SearchLyrics', {
+          trackData: track,
+          lyrics: fetchedLyrics || '',
+        });
       } catch (lyricsError) {
         if (lyricsError.message === 'TIMEOUT' && retryCount < 1) {
           console.log('Retrying lyrics fetch...');
@@ -169,14 +179,23 @@ export default function HomeScreen({ mockMode = false, mockData, mockLyrics } = 
 
           try {
             const fetchedLyrics = await getLyrics(track.artist, track.title);
-            setLyrics(fetchedLyrics || '');
+            navigation.navigate('SearchLyrics', {
+              trackData: track,
+              lyrics: fetchedLyrics || '',
+            });
           } catch (retryError) {
             console.log('Retry failed, showing track without lyrics');
-            setLyrics('');
+            navigation.navigate('SearchLyrics', {
+              trackData: track,
+              lyrics: '',
+            });
           }
         } else {
           console.log('Could not fetch lyrics, showing track without lyrics');
-          setLyrics('');
+          navigation.navigate('SearchLyrics', {
+            trackData: track,
+            lyrics: '',
+          });
         }
       }
     } catch (searchError) {
@@ -218,42 +237,24 @@ export default function HomeScreen({ mockMode = false, mockData, mockLyrics } = 
     handleSearch();
   };
 
-  const handleScroll = Animated.event(
-    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-    { useNativeDriver: false }
-  );
-  const handleBack = () => {
-    if (mockMode) {
-      setTrackData(mockData || DEFAULT_MOCK_TRACK);
-      setLyrics(mockLyrics || DEFAULT_MOCK_LYRICS);
-      setError(null);
-      setSearchQuery('');
-      return;
-    }
-    setTrackData(null);
-    setLyrics('');
-    setError(null);
-    setSearchQuery('');
-  };
-
   const handlePreviewTrack = (track) => {
     if (!track) return;
     setError(null);
     setLoading(false);
-    setTrackData({
-      title: track.title,
-      artist: track.artist,
-      album: track.album || 'Single',
-      albumArt: track.image,
+    navigation.navigate('SearchLyrics', {
+      trackData: {
+        title: track.title,
+        artist: track.artist,
+        album: track.album || 'Single',
+        albumArt: track.image,
+      },
+      lyrics: track.preview || '',
     });
-    setLyrics(track.preview || '');
   };
 
 return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.container}>
-
-        {trackData && <CollapsingHeader scrollY={scrollY} trackData={trackData} />}
 
         {loading && <SkeletonLoader />}
 
@@ -261,12 +262,12 @@ return (
           <ErrorMessage 
             message={error.message} 
             onRetry={error.type !== 'not_found' ? handleRetry : null}
-            onBack={handleBack}
+            onBack={() => setError(null)}
             
           />
         )}
 
-        {!loading && !error && !trackData && (
+        {!loading && !error && (
           <EmptyState
             searchQuery={searchQuery}
             onChangeText={setSearchQuery}
@@ -274,17 +275,6 @@ return (
             useMockSearch={useMockSearch}
             onToggleMockSearch={() => setUseMockSearch((prev) => !prev)}
             onPreviewTrack={handlePreviewTrack}
-          />
-        )}
-
-        {!loading && !error && trackData && (
-          <LyricsDisplay 
-            trackData={trackData} 
-            lyrics={lyrics}
-            onRefresh={handleSearch}
-            onScroll={handleScroll}
-            onBack={handleBack}
-            scrollY={scrollY}
           />
         )}
       </View>

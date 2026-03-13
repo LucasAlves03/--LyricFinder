@@ -1,6 +1,6 @@
 import { View, Text, ImageBackground, Animated, StyleSheet, Dimensions, RefreshControl, TouchableOpacity, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Feather } from '@expo/vector-icons';
 import { saveLyrics, isLyricsSaved } from '../services/storageService';
 
@@ -9,27 +9,26 @@ const { height } = Dimensions.get('window');
 export default function LyricsDisplay({ trackData, lyrics, onRefresh, onScroll, onBack, scrollY }) {
   const [refreshing, setRefreshing] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const enter = useRef(new Animated.Value(0)).current;
 
   const resolveImageSource = (albumArt) => {
     if (!albumArt) return null;
     return typeof albumArt === 'string' ? { uri: albumArt } : albumArt;
   };
 
-  const backButtonOpacity = scrollY ? scrollY.interpolate({
-    inputRange: [0, 50],
-    outputRange: [1, 0],
-    extrapolate: 'clamp',
-  }) : new Animated.Value(1);
-
-  const backButtonTranslateY = scrollY ? scrollY.interpolate({
-    inputRange: [0, 50],
-    outputRange: [0, -50],
-    extrapolate: 'clamp',
-  }) : new Animated.Value(0);
 
   useEffect(() => {
     checkIfSaved();
   }, [trackData]);
+
+  useEffect(() => {
+    enter.setValue(0);
+    Animated.timing(enter, {
+      toValue: 1,
+      duration: 260,
+      useNativeDriver: true,
+    }).start();
+  }, [enter, trackData?.title, trackData?.artist]);
 
   const checkIfSaved = async () => {
     if (trackData) {
@@ -67,25 +66,22 @@ export default function LyricsDisplay({ trackData, lyrics, onRefresh, onScroll, 
   }
 
   return (
-    <View style={styles.wrapper}>
-      <Animated.View 
-        style={[
-          styles.backButtonContainer,
-          {
-            opacity: backButtonOpacity,
-            transform: [{ translateY: backButtonTranslateY }],
-          }
-        ]}
-        pointerEvents={scrollY && scrollY._value > 50 ? 'none' : 'auto'}
-      >
-        <View style={styles.backButton}>
-          <TouchableOpacity style={styles.backButtonInner} onPress={onBack}>
-            <Feather name="arrow-left" size={22} color="#fff" />
-            <Text style={styles.backButtonText}>Back</Text>
-          </TouchableOpacity>
-        </View>
-      </Animated.View>
-
+    <Animated.View
+      style={[
+        styles.wrapper,
+        {
+          opacity: enter,
+          transform: [
+            {
+              scale: enter.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0.98, 1],
+              }),
+            },
+          ],
+        },
+      ]}
+    >
       <Animated.ScrollView 
         style={styles.container} 
         showsVerticalScrollIndicator={false}
@@ -149,37 +145,14 @@ export default function LyricsDisplay({ trackData, lyrics, onRefresh, onScroll, 
           </View>
         </View>
       </Animated.ScrollView>
-    </View>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    
-  },
-  backButtonContainer: {
-    position: 'absolute',
-    top: 10,
-    left: 15,
-    zIndex: 1000,
-    
-  },
-  backButton: {
-    borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.65)',
-  },
-  backButtonInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    gap: 8,
-  },
-  backButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    backgroundColor: '#0c0c0c',
   },
   container: {
     flex: 1,
@@ -231,8 +204,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#f0e9e9',
     textAlign: 'left',
-    
-    
   },
   metaRow: {
     paddingHorizontal: 22,
@@ -274,14 +245,14 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   lyrics: {
-    fontSize: 18,
-    lineHeight: 26,
+    fontSize: 20,
+    lineHeight: 35,
     color: '#ffffff',
     width: '100%',
     letterSpacing: 0.3,
   },
   noLyrics: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#d0d0d0',
     textAlign: 'left',
     fontStyle: 'italic',

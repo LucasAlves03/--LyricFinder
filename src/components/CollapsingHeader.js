@@ -19,7 +19,8 @@ export default function CollapsingHeader({ scrollY, trackData }) {
   });
 
   return (
-    <Animated.View 
+    <Animated.View
+      pointerEvents="none"
       style={[
         styles.container, 
         { 
