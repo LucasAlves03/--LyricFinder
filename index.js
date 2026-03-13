@@ -9,7 +9,6 @@ import SearchLyricsScreen from './src/screens/SearchLyricsScreen';
 import SavedLyricsScreen from './src/screens/SavedLyricsScreen';
 import SavedLyricsDetailScreen from './src/screens/SavedLyricsDetailScreen';
 import AnimatedSplash from './src/components/AnimatedSplash';
-import SearchTabPreview from './src/components/SearchTabPreview';
 import { useState, useEffect, useRef } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets, SafeAreaProvider } from 'react-native-safe-area-context';
@@ -18,7 +17,6 @@ import { useIsFocused } from '@react-navigation/native';
 // attach to search => Tame impala the less i know the better
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
-const USE_SEARCH_PREVIEW = false;
 
 function FadeTabScreen({ children }) {
   const isFocused = useIsFocused();
@@ -111,7 +109,7 @@ function SearchStack() {
     >
       <Stack.Screen
         name="SearchMain"
-        component={USE_SEARCH_PREVIEW ? SearchTabPreview : SearchScreen}
+        component={SearchScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen

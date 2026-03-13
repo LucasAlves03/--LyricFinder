@@ -14,6 +14,56 @@ const decodeHtmlEntities = (text) => {
     .replace(/&nbsp;/g, ' ');
 };
 
+const normalizeTitle = (title) => {
+  if (!title) return title;
+  let cleaned = title.trim();
+
+  cleaned = cleaned.replace(/\s*\[[^\]]*\]\s*/g, ' ');
+  cleaned = cleaned.replace(/\s*\([^)]*\)\s*/g, ' ');
+
+  const dashParts = cleaned.split(/\s[-–—]\s/);
+  if (dashParts.length > 1) {
+    const suffix = dashParts.slice(1).join(' ').toLowerCase();
+    if (
+      /(remaster|live|acoustic|mix|version|edit|radio|mono|stereo|deluxe|bonus|demo)/.test(suffix)
+    ) {
+      cleaned = dashParts[0];
+    }
+  }
+
+  cleaned = cleaned.replace(/\s+/g, ' ').trim();
+  return cleaned;
+};
+
+const normalizeArtist = (artist) => {
+  if (!artist) return artist;
+  let cleaned = artist.trim();
+  cleaned = cleaned.replace(/\s*(feat\.?|featuring|with)\s.+$/i, '');
+  cleaned = cleaned.replace(/\s+/g, ' ').trim();
+  return cleaned;
+};
+
+const buildCandidatePairs = (artist, title) => {
+  const pairs = [];
+  const original = { artist, title };
+  const cleanedTitle = normalizeTitle(title);
+  const cleanedArtist = normalizeArtist(artist);
+
+  pairs.push(original);
+  pairs.push({ artist, title: cleanedTitle });
+  pairs.push({ artist: cleanedArtist, title });
+  pairs.push({ artist: cleanedArtist, title: cleanedTitle });
+
+  const seen = new Set();
+  return pairs.filter((pair) => {
+    if (!pair.artist || !pair.title) return false;
+    const key = `${pair.artist.toLowerCase()}::${pair.title.toLowerCase()}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+};
+
 const extractLyricsFromHtml = (html) => {
   if (!html) return null;
 
@@ -86,14 +136,25 @@ const isNetworkError = (error) => {
 };
 
 const getLyricsFromOVH = async (artist, title) => {
-  try {
-    const response = await axios.get(
-      `https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(title)}`,
-      { timeout: 8000 } 
-    );
+  const candidates = buildCandidatePairs(artist, title);
 
-    if (response.data.lyrics) {
-      return response.data.lyrics;
+  try {
+    for (const candidate of candidates) {
+      try {
+        const response = await axios.get(
+          `https://api.lyrics.ovh/v1/${encodeURIComponent(candidate.artist)}/${encodeURIComponent(candidate.title)}`,
+          { timeout: 8000 }
+        );
+
+        if (response.data.lyrics) {
+          return response.data.lyrics;
+        }
+      } catch (error) {
+        if (error?.response?.status === 404) {
+          continue;
+        }
+        throw error;
+      }
     }
     return null;
   } catch (error) {
@@ -103,20 +164,38 @@ const getLyricsFromOVH = async (artist, title) => {
 
 const getLyricsFromOVHSuggest = async (artist, title) => {
   try {
-    const response = await axios.get(
-      `https://api.lyrics.ovh/suggest/${encodeURIComponent(artist + ' ' + title)}`,
-      { timeout: 8000 }
-    );
+    const queryVariants = [
+      `${artist} ${title}`,
+      `${normalizeArtist(artist)} ${normalizeTitle(title)}`,
+    ].filter(Boolean);
 
-    if (response.data.data && response.data.data.length > 0) {
-      const firstResult = response.data.data[0];
-      const lyricsResponse = await axios.get(
-        `https://api.lyrics.ovh/v1/${encodeURIComponent(firstResult.artist.name)}/${encodeURIComponent(firstResult.title)}`,
+    for (const query of queryVariants) {
+      const response = await axios.get(
+        `https://api.lyrics.ovh/suggest/${encodeURIComponent(query)}`,
         { timeout: 8000 }
       );
-      
-      if (lyricsResponse.data.lyrics) {
-        return lyricsResponse.data.lyrics;
+
+      const results = response.data?.data || [];
+      for (const result of results.slice(0, 5)) {
+        const resultArtist = result?.artist?.name;
+        const resultTitle = result?.title;
+        if (!resultArtist || !resultTitle) continue;
+
+        try {
+          const lyricsResponse = await axios.get(
+            `https://api.lyrics.ovh/v1/${encodeURIComponent(resultArtist)}/${encodeURIComponent(resultTitle)}`,
+            { timeout: 8000 }
+          );
+
+          if (lyricsResponse.data.lyrics) {
+            return lyricsResponse.data.lyrics;
+          }
+        } catch (error) {
+          if (error?.response?.status === 404) {
+            continue;
+          }
+          throw error;
+        }
       }
     }
     return null;

@@ -218,8 +218,6 @@ export default function EmptyState({
   searchQuery,
   onChangeText,
   onSubmit,
-  useMockSearch,
-  onToggleMockSearch,
   onPreviewTrack,
 }) {
   const handleOpenPreview = (track) => {
@@ -250,14 +248,6 @@ export default function EmptyState({
             iconColor="#6b6b6b"
             placeholderTextColor="#7a7a7a"
           />
-          <TouchableOpacity
-            style={[styles.mockToggle, useMockSearch && styles.mockToggleActive]}
-            onPress={onToggleMockSearch}
-          >
-            <Text style={styles.mockToggleText}>
-              {useMockSearch ? 'Mock search: ON' : 'Mock search: OFF'}
-            </Text>
-          </TouchableOpacity>
         </View>
 
         <View style={styles.previewSection}>
@@ -328,26 +318,6 @@ const styles = StyleSheet.create({
   searchInput: {
     color: '#2e2e2e',
     fontWeight: '600',
-  },
-  mockToggle: {
-    alignSelf: 'flex-start',
-    marginTop: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-    backgroundColor: '#262626',
-    borderWidth: 1,
-    borderColor: '#353535',
-  },
-  mockToggleActive: {
-    backgroundColor: '#333333',
-    borderColor: '#777777',
-  },
-  mockToggleText: {
-    color: '#cfcfcf',
-    fontSize: 11,
-    fontWeight: '600',
-    letterSpacing: 0.2,
   },
   previewSection: {
     marginTop: 24,
