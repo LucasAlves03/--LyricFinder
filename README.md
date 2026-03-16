@@ -7,7 +7,7 @@ This app was developed using Expo Go and Android Studio for the build process, w
 ## Screenshots
 
 <p align="center">
-  <img src="screenshots/Home.jpeg" width="250"/>
-  <img src="screenshots/LyricView.jpeg" width="250"/>
-   <img src="screenshots/SavedLyrics.jpeg" width="250"/>
+  <img src="screenshots/home.png" width="250"/>
+  <img src="screenshots/lyric.png" width="250"/>
+   <img src="screenshots/saved.png" width="250"/>
 </p>
