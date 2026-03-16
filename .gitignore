@@ -44,4 +44,4 @@ yarn-error.*
 config.js
 
 #auth
-services/LyricsApi.js
+src/services/LyricsApi.js
