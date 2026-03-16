@@ -18,42 +18,17 @@ import { useIsFocused } from '@react-navigation/native';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-function FadeTabScreen({ children }) {
-  const isFocused = useIsFocused();
-  const opacity = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    if (isFocused) {
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 220,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      opacity.setValue(0);
-    }
-  }, [isFocused, opacity]);
-
-  return (
-    <Animated.View style={{ flex: 1, opacity, backgroundColor: '#0c0c0c' }}>
-      {children}
-    </Animated.View>
-  );
-}
 
 function SearchTab() {
   return (
-    <FadeTabScreen>
       <SearchStack />
-    </FadeTabScreen>
   );
 }
 
 function SavedTab() {
   return (
-    <FadeTabScreen>
       <SavedStack />
-    </FadeTabScreen>
   );
 }
 
