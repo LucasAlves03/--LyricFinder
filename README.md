@@ -1,4 +1,4 @@
-# Lyric finder 🎵
+# Lyric finder 
 
 The app allows you to search for your favorite songs and displays the cover art along with the full lyrics. You can save any lyric by tapping the save button, and it will then appear in the Saved Lyrics tab.
 
@@ -7,7 +7,7 @@ This app was developed using Expo Go and Android Studio for the build process, w
 ## Screenshots
 
 <p align="center">
-  <img src="screenshots/home.png" width="250"/>
-  <img src="screenshots/lyric.png" width="250"/>
-   <img src="screenshots/saved.png" width="250"/>
+  <img src="screenshots/home.jpeg" width="250"/>
+  <img src="screenshots/lyric.jpeg" width="250"/>
+   <img src="screenshots/saved.jpeg" width="250"/>
 </p>
